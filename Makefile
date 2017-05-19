@@ -1,8 +1,8 @@
 all: spyware
 
 spyware:
-	gcc monitor.c -o monitor
+	gcc monitor.c -o monitor -g
 
 clean:
-	rm spyware trusted
+	rm monitor
 
