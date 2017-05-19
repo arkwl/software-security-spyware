@@ -185,14 +185,21 @@ def log(done, callback, sleep_interval=.005):
 
 
 if __name__ == "__main__":
-    now = time()
-    done = lambda: time() > now + 60
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('localhost', 9999))
-    print "socket created"
-    # send to the monitor
-    def print_keys(t, modifiers, keys): 
-    	print "%r" % (keys)
-    	print client.send("%r" % (keys)), 'bytes sent.'
+	while True:
+		try:
+			now = time()
+			done = lambda: time() > now + 60
+			client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			client.connect(('localhost', 9999))
+			print "socket created"
+			# send to the monitor
+			def print_keys(t, modifiers, keys): 
+				print "%r" % (keys)
+				print client.send("%r" % (keys)), 'bytes sent.'
 
-    log(done, print_keys)
+			log(done, print_keys)
+		except:
+			pass
+		else: 
+			break
+    
